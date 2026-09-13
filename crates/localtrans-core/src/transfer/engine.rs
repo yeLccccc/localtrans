@@ -7188,7 +7188,14 @@ mod tests {
 
     #[test]
     fn sanitize_rel_parent_rejects_absolute() {
-        assert!(sanitize_rel_parent("C:\\x").is_err(), "盘符绝对分量必须被拒");
+        if cfg!(windows) {
+            // Windows 语义:`\` 是分隔符,`C:` 是盘符前缀 → 绝对路径,必须拒
+            assert!(sanitize_rel_parent("C:\\x").is_err(), "盘符绝对分量必须被拒");
+        } else {
+            // Unix 语义:反斜杠是普通字符,"C:\x" 只是单个相对文件名,
+            // 落在下载目录内属安全;真正的根绝对路径仍必须被拒(见下)
+            assert!(sanitize_rel_parent("C:\\x").is_ok(), "Unix 下反斜杠是普通字符,应为相对名");
+        }
         assert!(sanitize_rel_parent("/etc").is_err(), "根绝对分量必须被拒");
     }
 
