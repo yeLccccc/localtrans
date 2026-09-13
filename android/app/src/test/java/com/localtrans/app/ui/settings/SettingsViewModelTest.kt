@@ -120,8 +120,8 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `relay UI hidden when feature flag off skips status polling`() = runTest {
-        // Given: Fake repo with an error override(发布态下也不应被拉取)
+    fun `relay status reflects fake repo when error reported`() = runTest {
+        // Given: Fake repo with an error relay status
         fakeRepo.relayStatusOverride = uniffi.localtrans_ffi.RelayStatusDto(
             enabled = true,
             connected = false,
@@ -130,12 +130,64 @@ class SettingsViewModelTest {
             publicExit = null
         )
 
-        // When: A fresh ViewModel attempts to load relay status
+        // When: A fresh ViewModel loads relay status
         val freshViewModel = SettingsViewModel(fakeRepo)
         freshViewModel.loadRelayStatus()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Then: 中继功能发布态隐藏——状态文案停在默认"未启用",不触达 repo
+        // Then: UI state surfaces the human-readable error
+        assertEquals("配置错误: 服务器地址缺少端口", freshViewModel.uiState.value.relayStatusText)
+    }
+
+    @Test
+    fun `relay status disabled default renders as not enabled`() = runTest {
+        // Given: Fake repo with no override (defaults to disabled)
+        // When: A fresh ViewModel loads relay status
+        val freshViewModel = SettingsViewModel(fakeRepo)
+        freshViewModel.loadRelayStatus()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then: UI state shows the disabled default
         assertEquals("未启用", freshViewModel.uiState.value.relayStatusText)
+    }
+
+    @Test
+    fun `relay status connected renders as connected`() = runTest {
+        // Given: Fake repo with a connected status
+        fakeRepo.relayStatusOverride = uniffi.localtrans_ffi.RelayStatusDto(
+            enabled = true,
+            connected = true,
+            status = "connected",
+            error = "",
+            publicExit = null
+        )
+
+        // When: A fresh ViewModel loads relay status
+        val freshViewModel = SettingsViewModel(fakeRepo)
+        freshViewModel.loadRelayStatus()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then: UI state shows connected
+        assertEquals("已连接", freshViewModel.uiState.value.relayStatusText)
+    }
+
+    @Test
+    fun `relay status enabled but not connected renders as connecting`() = runTest {
+        // Given: Fake repo with an enabled but not connected status
+        fakeRepo.relayStatusOverride = uniffi.localtrans_ffi.RelayStatusDto(
+            enabled = true,
+            connected = false,
+            status = "connecting",
+            error = "",
+            publicExit = null
+        )
+
+        // When: A fresh ViewModel loads relay status
+        val freshViewModel = SettingsViewModel(fakeRepo)
+        freshViewModel.loadRelayStatus()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then: UI state shows connecting
+        assertEquals("连接中", freshViewModel.uiState.value.relayStatusText)
     }
 }

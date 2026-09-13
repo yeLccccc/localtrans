@@ -126,7 +126,7 @@ describe('DeviceCard 通道面板入口(M3c T2)', () => {
   })
 })
 
-describe('DeviceCard 强制走中继(M3c T3,发布态 RELAY_ENABLED=false 隐藏)', () => {
+describe('DeviceCard 强制走中继(M3c T3)', () => {
   /** 已信任设备才能展开 ⋮ 菜单 */
   function mountTrusted(forceRelay: boolean) {
     const settings = useSettingsStore()
@@ -147,14 +147,36 @@ describe('DeviceCard 强制走中继(M3c T3,发布态 RELAY_ENABLED=false 隐藏
     invokeMock.mockResolvedValue(true)
   })
 
-  it('发布态隐藏:角标与 ⋮ 勾选项不渲染,无任何 set_force_relay 入口', async () => {
-    const on = mountTrusted(true)
-    expect(on.find('[data-testid="device-force-relay-badge"]').exists()).toBe(false)
-    await on.find('[data-testid="device-menu-btn"]').trigger('click')
-    expect(on.find('[data-testid="device-force-relay-toggle"]').exists()).toBe(false)
-    const off = mountTrusted(false)
-    expect(off.find('[data-testid="device-force-relay-badge"]').exists()).toBe(false)
-    expect(invokeMock).not.toHaveBeenCalled()
+  it('开启时卡上显示强制中继角标,关闭时无', () => {
+    expect(mountTrusted(true).find('[data-testid="device-force-relay-badge"]').exists()).toBe(true)
+    expect(mountTrusted(false).find('[data-testid="device-force-relay-badge"]').exists()).toBe(false)
+  })
+
+  it('⋮ 菜单含「强制走中继」勾选项,勾选态与 force_relay 同源', async () => {
+    const wrapper = mountTrusted(true)
+    await wrapper.find('[data-testid="device-menu-btn"]').trigger('click')
+    const toggle = wrapper.find('[data-testid="device-force-relay-toggle"] input[type="checkbox"]')
+    expect(toggle.exists()).toBe(true)
+    expect((toggle.element as HTMLInputElement).checked).toBe(true)
+    // 关闭态
+    const wrapper2 = mountTrusted(false)
+    await wrapper2.find('[data-testid="device-menu-btn"]').trigger('click')
+    const toggle2 = wrapper2.find('[data-testid="device-force-relay-toggle"] input[type="checkbox"]')
+    expect((toggle2.element as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('切换勾选调用 set_force_relay 且乐观更新本地列表', async () => {
+    const store = useDevicesStore()
+    store.devices = [{
+      fingerprint: 'fp-device-1', name: '测试设备', addr: '192.168.1.23:47601',
+      online: true, connected: true, force_relay: false,
+    }]
+    const wrapper = mountTrusted(false)
+    await wrapper.find('[data-testid="device-menu-btn"]').trigger('click')
+    const toggle = wrapper.find('[data-testid="device-force-relay-toggle"] input[type="checkbox"]')
+    await toggle.setValue(true)
+    expect(invokeMock).toHaveBeenCalledWith('set_force_relay', { fingerprint: 'fp-device-1', enabled: true })
+    expect(store.devices[0].force_relay).toBe(true)
   })
 })
 
