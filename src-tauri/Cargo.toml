@@ -1,0 +1,38 @@
+[package]
+name = "localtrans"
+version = "0.13.0"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+localtrans-core = { path = "../crates/localtrans-core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+hex = "0.4"
+rand = "0.8"
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+windows-sys = { version = "0.59", features = ["Win32_UI_WindowsAndMessaging"] }
+# Task M0: 测试 API 服务（feature = "test-api"）的 HTTP 框架，
+# optional + dep: 门控，正式构建不进依赖树（spec §7.1.1 编译期门）
+axum = { version = "0.8", optional = true }
+# Task M4: 截图依赖（spec §7.1.8，窗口级捕获）。xcap 重导出 image
+# （RgbaImage + PNG 编码），无需另挂 image 依赖。
+xcap = { version = "0.9", optional = true }
+
+[features]
+# 自动化测试 API 门控，默认关闭（spec §7.1.1）。
+# Task M4 起 xcap 随 feature 进入依赖树（截图端点）。
+test-api = ["dep:axum", "dep:xcap"]
+
+[dev-dependencies]
+tempfile = "3"

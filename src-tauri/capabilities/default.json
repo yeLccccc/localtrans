@@ -1,0 +1,18 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "LocalTrans 主窗口默认能力：核心事件监听 + 关闭守卫销毁窗口 + 目录选择对话框 + 打开下载目录",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "core:window:allow-destroy",
+    "dialog:default",
+    "notification:default",
+    "opener:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [{ "path": "$DOWNLOAD/**" }, { "path": "$LOGDIR/**" }]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[package]
+name = "localtrans-ffi"
+edition.workspace = true
+version.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "localtrans_ffi"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi-bindgen.rs"
+
+[dependencies]
+localtrans-core = { path = "../localtrans-core" }
+uniffi = { version = "0.28", features = ["cli"] }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+
+# M7:Android logcat 桥(自定义 tracing Layer 直绑 liblog),仅 android target
+[target.'cfg(target_os = "android")'.dependencies]
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,195 @@
+/**
+ * LocalTrans 设计 token 体系
+ * 唯一的颜色/字体/圆角/间距/控件尺寸来源。
+ * 组件里不要再写裸 hex —— 用这里的 CSS 变量。
+ */
+
+:root {
+  /* ===== 字体 ===== */
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI",
+    "PingFang SC", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", ui-monospace, monospace;
+
+  /* ===== 色板:主色(蓝)一族 ===== */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+
+  /* ===== 语义色 ===== */
+  --success-500: #10b981;
+  --success-600: #059669;
+  --success-50: #ecfdf5;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+  --warning-50: #fffbeb;
+  --danger-500: #ef4444;
+  --danger-600: #dc2626;
+  --danger-50: #fef2f2;
+
+  /* ===== 中性色阶(冷灰) ===== */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* ===== 角色色(传输三角色) ===== */
+  --role-destination: #10b981; /* 接收方 绿 */
+  --role-source-push: #f59e0b; /* 推送方 琥珀 */
+  --role-source-pull: #f97316; /* 被取方 橙 */
+  --role-destination-bg: #ecfdf5;
+  --role-source-push-bg: #fffbeb;
+  --role-source-pull-bg: #fff7ed;
+
+  /* ===== 圆角(三档 + 圆形) ===== */
+  --radius-sm: 6px;  /* 按钮、输入框、小徽章 */
+  --radius-md: 10px; /* 卡片、下拉 */
+  --radius-lg: 16px; /* 大模态、特殊容器 */
+  --radius-full: 9999px;
+
+  /* ===== 间距(4px 基) ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ===== 控件尺寸 ===== */
+  --control-h-sm: 32px;
+  --control-h-md: 36px;
+  --control-h-lg: 44px;
+
+  /* ===== 阴影(两档,克制) ===== */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 4px 12px rgba(17, 24, 39, 0.1);
+
+  /* ===== 字号 ===== */
+  --text-xs: 12px;   /* 状态、元信息下限 */
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+
+  /* ===== 动效 ===== */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 250ms;
+}
+
+/* ===== 全局基础 ===== */
+html {
+  font-family: var(--font-sans);
+  color: var(--gray-800);
+  background: var(--gray-50);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+/* 数字列/进度/速率等宽显示,防止跳动 */
+.numeric,
+.progress-percent,
+.speed-text,
+.health-panel {
+  font-variant-numeric: tabular-nums;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* 键盘可达性:统一 focus 环 */
+:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* ===== 通用控件类(供各组件复用,替代组件内散落的 button 样式) ===== */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease;
+  padding: 0 var(--space-4);
+  min-height: var(--control-h-md);
+}
+.btn-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-lg {
+  min-height: var(--control-h-lg);
+  padding: 0 var(--space-5);
+}
+
+.btn-primary {
+  background: var(--primary-600);
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-700);
+}
+
+.btn-secondary {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--gray-200);
+}
+
+.btn-danger {
+  background: var(--danger-500);
+  color: white;
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-600);
+}
+
+.btn-success {
+  background: var(--success-500);
+  color: white;
+}
+.btn-success:hover:not(:disabled) {
+  background: var(--success-600);
+}
+
+/* 卡片基类 */
+.card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

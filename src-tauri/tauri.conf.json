@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "LocalTrans",
+  "version": "0.13.0",
+  "identifier": "com.localtrans.app",
+  "build": {
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm --prefix ../ui run dev",
+    "frontendDist": "../ui/dist"
+  },
+  "app": {
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
+    },
+    "windows": [
+      {
+        "title": "LocalTrans 局域网互传",
+        "width": 1000,
+        "height": 680,
+        "resizable": true,
+        "decorations": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all"
+  }
+}

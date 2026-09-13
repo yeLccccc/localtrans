@@ -1,0 +1,10 @@
+# LocalTrans 中继配置(阿里云 Ubuntu)
+# 证书:控制面自签(重启换证书没关系——客户端不验 CA 只验 PSK 通道绑定)
+
+control_port = 9443           # 控制面 QUIC(udp)
+data_port_start = 9000        # 数据面端口池起(udp)
+data_port_end = 9100          # 数据面端口池止(udp)
+public_ip = "你的服务器公网IP"  # 名册/会话地址拼接用
+psk = "改成一个长随机串"        # 客户端要填一样的
+lease_ttl_secs = 45
+auth_max_per_min = 5

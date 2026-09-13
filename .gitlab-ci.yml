@@ -1,0 +1,50 @@
+# CI：core / relay / ui 三条泳道门禁（与 scripts/gate.sh 保持一致）。
+#
+# GitHub Actions 版本见 .github/workflows/ci.yml（双平台共用同一套命令）。
+#
+# shell 泳道（cargo test -p localtrans）需要 Tauri 系统依赖
+# （Linux 上为 webkit2gtk 等），暂留在本地 Windows 门禁执行；
+# android 泳道依赖 NDK/cargo-ndk 本机工具链，同样留在本地。
+stages:
+  - test
+
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  CARGO_TERM_COLOR: always
+
+.cargo-cache:
+  cache:
+    key:
+      files:
+        - Cargo.lock
+    paths:
+      - .cargo/bin/
+      - .cargo/registry/
+      - .cargo/git/
+
+test:core:
+  stage: test
+  image: rust:1
+  extends: .cargo-cache
+  script:
+    - cargo test -p localtrans-core
+
+test:relay:
+  stage: test
+  image: rust:1
+  extends: .cargo-cache
+  # 端口竞争，必须串行（同 gate.sh relay）
+  script:
+    - cargo test -p localtrans-relay -- --test-threads=1
+
+test:ui:
+  stage: test
+  image: node:20
+  cache:
+    key:
+      files:
+        - ui/package-lock.json
+    paths:
+      - .npm/
+  script:
+    - cd ui && npm ci --cache .npm && npm run build

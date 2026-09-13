@@ -1,0 +1,31 @@
+target/
+node_modules/
+dist/
+/data/
+*.part
+.gstack/
+ui/.design-shots/
+
+# Android build outputs
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+*.apk
+android/.idea/
+android/*.iml
+android/.kotlin/
+android/keystore/
+android/keystore.properties
+tmp/
+
+# 并行 agent worktree 槽位记录（worktree 本体在 D 盘，不入库）
+.wt/
+
+# 本机/内部产物（不入库）
+.omc/
+target-relay-linux/
+target.android/
+tests/e2e/force-relay-*/
+CLAUDE-local.md
+resources/

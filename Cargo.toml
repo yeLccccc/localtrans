@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["crates/localtrans-core", "crates/localtrans-relay", "crates/localtrans-ffi", "src-tauri"]
+
+[workspace.package]
+edition = "2021"
+version = "0.13.0"
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+quinn = "0.11"
+socket2 = "0.5"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+rcgen = { version = "0.13", default-features = false, features = ["ring"] }
+ed25519-dalek = { version = "2", features = ["rand_core", "pkcs8"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+hkdf = "0.12"
+rand = "0.8"
+subtle = "2.6"
+thiserror = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-appender = "0.2"
+if-addrs = "0.13"

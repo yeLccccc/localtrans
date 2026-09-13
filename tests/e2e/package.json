@@ -1,0 +1,10 @@
+{
+  "name": "localtrans-e2e",
+  "private": true,
+  "type": "module",
+  "description": "LocalTrans E2E 编排器：SSH 部署 / adb 控制 / test-api 客户端",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "ssh2": "^1.16.0"
+  }
+}
